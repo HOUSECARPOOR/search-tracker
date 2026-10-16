@@ -36,13 +36,25 @@ DATALAB_URL = os.environ.get("DATALAB_URL", "https://naverapihub.apigw.ntruss.co
 SEARCHAD_URL = "https://api.searchad.naver.com"
 
 
+class ApiError(Exception):
+    pass
+
+
 def http_json(req):
-    with urllib.request.urlopen(req, timeout=30) as resp:
-        return json.loads(resp.read().decode("utf-8"))
+    try:
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            return json.loads(resp.read().decode("utf-8"))
+    except urllib.error.HTTPError as e:
+        body = e.read().decode("utf-8", "replace")[:500]
+        raise ApiError(f"HTTP {e.code} {req.full_url.split('?')[0]} 응답: {body}") from None
+
+
+def env(key):
+    return os.environ.get(key, "").strip()
 
 
 def _datalab_headers():
-    cid, secret = os.environ["NAVER_CLIENT_ID"], os.environ["NAVER_CLIENT_SECRET"]
+    cid, secret = env("NAVER_CLIENT_ID"), env("NAVER_CLIENT_SECRET")
     if "openapi.naver.com" in DATALAB_URL:  # 이관 전 개발자센터 방식
         auth = {"X-Naver-Client-Id": cid, "X-Naver-Client-Secret": secret}
     else:  # NAVER API HUB 방식
@@ -82,12 +94,12 @@ def _searchad_headers(method, uri):
     ts = str(int(time.time() * 1000))
     msg = f"{ts}.{method}.{uri}".encode("utf-8")
     sig = base64.b64encode(
-        hmac.new(os.environ["SEARCHAD_SECRET"].encode("utf-8"), msg, hashlib.sha256).digest()
+        hmac.new(env("SEARCHAD_SECRET").encode("utf-8"), msg, hashlib.sha256).digest()
     ).decode()
     return {
         "X-Timestamp": ts,
-        "X-API-KEY": os.environ["SEARCHAD_API_KEY"],
-        "X-Customer": os.environ["SEARCHAD_CUSTOMER_ID"],
+        "X-API-KEY": env("SEARCHAD_API_KEY"),
+        "X-Customer": env("SEARCHAD_CUSTOMER_ID"),
         "X-Signature": sig,
     }
 
@@ -133,10 +145,10 @@ def searchad_monthly(keywords):
 def main():
     cfg = json.loads(CONFIG.read_text(encoding="utf-8"))
     for key in ("NAVER_CLIENT_ID", "NAVER_CLIENT_SECRET"):
-        if not os.environ.get(key):
+        if not env(key):
             sys.exit(f"환경변수 {key} 가 없습니다. README의 'API 키 발급'을 확인하세요.")
     has_searchad = all(
-        os.environ.get(k) for k in ("SEARCHAD_API_KEY", "SEARCHAD_SECRET", "SEARCHAD_CUSTOMER_ID")
+        env(k) for k in ("SEARCHAD_API_KEY", "SEARCHAD_SECRET", "SEARCHAD_CUSTOMER_ID")
     )
 
     today = dt.date.today()
@@ -144,7 +156,7 @@ def main():
     start = cfg.get("start_date", "2016-01-01")
 
     snapshots = json.loads(SNAPSHOTS.read_text(encoding="utf-8")) if SNAPSHOTS.exists() else {}
-    groups_out, series = [], {}
+    groups_out, series, searchad_errors = [], {}, []
 
     for g in cfg["groups"]:
         meta = {k: g.get(k) for k in ("id", "name", "is_mine", "color")}
@@ -159,11 +171,17 @@ def main():
 
         monthly = None
         if has_searchad:
-            per_kw = searchad_monthly(g["keywords"])
-            monthly = sum(v["pc"] + v["mobile"] for v in per_kw.values())
-            meta["searchad"] = per_kw
-            snapshots.setdefault(g["id"], {})[end] = monthly
-            print(f"       최근 30일 실제 검색 수 {monthly:,}")
+            try:
+                per_kw = searchad_monthly(g["keywords"])
+            except ApiError as e:
+                # 검색광고 API가 실패해도 데이터랩 지수는 저장한다.
+                print(f"[경고] 검색광고 API 실패, 지수만 저장합니다: {e}")
+                searchad_errors.append(str(e))
+            else:
+                monthly = sum(v["pc"] + v["mobile"] for v in per_kw.values())
+                meta["searchad"] = per_kw
+                snapshots.setdefault(g["id"], {})[end] = monthly
+                print(f"       최근 30일 실제 검색 수 {monthly:,}")
 
         last30 = sum(r for _, r in ratios[-30:])
         scale = (monthly / last30) if (monthly is not None and last30 > 0) else None
@@ -177,7 +195,7 @@ def main():
     out = {
         "updated_at": dt.datetime.now(dt.timezone(dt.timedelta(hours=9))).isoformat(timespec="minutes"),
         "demo": False,
-        "has_absolute": has_searchad,
+        "has_absolute": any(s[0][2] is not None for s in series.values() if s),
         "range": [start, end],
         "groups": groups_out,
         "series": series,  # id -> [[날짜, 데이터랩 지수, 추정 검색 수], ...]
@@ -186,6 +204,9 @@ def main():
     OUT.write_text(json.dumps(out, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     SNAPSHOTS.write_text(json.dumps(snapshots, ensure_ascii=False, indent=1), encoding="utf-8")
     print(f"[완료] {OUT.relative_to(ROOT)} 저장")
+    if searchad_errors:
+        # 데이터는 저장하되, 실패를 알 수 있게 작업은 실패로 끝낸다.
+        sys.exit("검색광고 API 오류가 있었습니다. 위 [경고]를 확인하세요.")
 
 
 if __name__ == "__main__":

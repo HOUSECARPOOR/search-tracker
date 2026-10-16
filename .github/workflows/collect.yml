@@ -12,8 +12,8 @@ jobs:
   collect:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
       - name: 수집
@@ -23,7 +23,7 @@ jobs:
           SEARCHAD_API_KEY: ${{ secrets.SEARCHAD_API_KEY }}
           SEARCHAD_SECRET: ${{ secrets.SEARCHAD_SECRET }}
           SEARCHAD_CUSTOMER_ID: ${{ secrets.SEARCHAD_CUSTOMER_ID }}
-        run: python collector/collect.py
+        run: python collector/collect.py || echo "COLLECT_FAILED=1" >> "$GITHUB_ENV"
       - name: 결과 저장
         run: |
           git config user.name "search-bot"
@@ -31,3 +31,8 @@ jobs:
           git add docs/data
           git diff --cached --quiet || git commit -m "검색량 데이터 갱신 $(date -u +%F)"
           git push
+      - name: 수집 오류 알림
+        if: env.COLLECT_FAILED == '1'
+        run: |
+          echo "수집 중 오류가 있었습니다. '수집' 단계 로그를 확인하세요."
+          exit 1
