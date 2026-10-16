@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>대시보드 버전 기록</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+:root{--bg:#f4f6f8;--surface:#fff;--ink:#111827;--ink-2:#4b5563;--line:#e3e7ec;--accent:#1f63b8;--pass:#1b7a43;--pass-bg:#e5f5ec;--fail:#c22e2e;--fail-bg:#fdeceb}
+@media (prefers-color-scheme:dark){:root{--bg:#0e1116;--surface:#161b22;--ink:#eef1f5;--ink-2:#b8c0cc;--line:#2a313b;--accent:#8cbaf3;--pass:#6fd39b;--pass-bg:#173326;--fail:#f07070;--fail-bg:#3a1d1f;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:"Pretendard Variable",Pretendard,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;line-height:1.65;word-break:keep-all}
+.wrap{max-width:860px;margin:0 auto;padding:32px max(16px,env(safe-area-inset-left)) 56px;display:grid;gap:16px}
+h1{margin:0;font-size:1.5rem}p{margin:0}.lead{color:var(--ink-2)}
+.v{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 20px;display:grid;gap:8px}
+.top{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}.top h2{margin:0;font-size:1.125rem}
+a{color:var(--accent);font-weight:600}.b{font-size:.8125rem;font-weight:700;padding:2px 9px;border-radius:999px}
+.pass{background:var(--pass-bg);color:var(--pass)}.fail{background:var(--fail-bg);color:var(--fail)}
+ul{margin:0;padding-left:1.2em;color:var(--ink-2);font-size:.9375rem}
+</style></head><body><div class="wrap">
+<h1>대시보드 버전 기록</h1>
+<p class="lead">오류 검증자(결함이 하나도 없어야 PASS)와 디자인 평가자(100점 만점 90점 이상 PASS)가 3라운드 동안 검토하고, 매 라운드 피드백을 반영해 새 버전을 만들었어요. 각 버전 링크는 같은 실제 데이터로 열려요.</p>
+
+<div class="v"><div class="top"><h2>v1 · 처음 버전</h2><a href="v1/">열어보기</a></div>
+<ul><li>사용자 의견: 폰트 가독성이 떨어지고 디자인이 심심함</li></ul></div>
+
+<div class="v"><div class="top"><h2>v2 · 리디자인</h2><a href="v2/">열어보기</a><span class="b fail">검증 FAIL · 결함 7</span><span class="b fail">평가 79점</span></div>
+<ul><li>바뀐 점: Pretendard 폰트, 한 줄 요약+점유율 막대, 브랜드 카드(큰 숫자·증감 배지·추이선), 상단 고정 컨트롤, 다크 모드</li>
+<li>검증자: 지수 모드에서 브랜드 크기 비교 문장, 모바일에서 버튼 화면 밖, 월별 첫 달 누락, 로드 실패 시 오류 2건, 화면낭독 문제, 0% 표현 불일치</li>
+<li>평가자: 모바일 표 첫 열 비침, 태블릿 표 잘림, 숫자 정렬, 작은 회색 글자 과다, 표가 너무 넓음, 개발 용어 문구 등 10건</li></ul></div>
+
+<div class="v"><div class="top"><h2>v3 · 1라운드 반영</h2><a href="v3/">열어보기</a><span class="b fail">검증 FAIL · 새 결함 4</span><span class="b fail">평가 88점</span></div>
+<ul><li>바뀐 점: 모바일 컨트롤 2줄, 글자 크기·대비 상향, 표 증감 열·점유율 정렬, 표 스크롤 안내, 빈 브랜드 안내 띠, 눈 아이콘 토글</li>
+<li>검증자: 641~736px에서 버튼 잘림, 폰트 적용 후 스크롤 안내가 남음, 일부 글자 대비 부족, 숫자 뒤 조사 오류</li>
+<li>평가자: 모바일 범례 칩 화면 밖, 모바일 표 열 폭 낭비, 긴 브랜드명 열, 카드 3+1 배치, 단일 브랜드 표 공백, 태그 중복 등 8건</li></ul></div>
+
+<div class="v"><div class="top"><h2>v4 · 2라운드 반영</h2><a href="v4/">열어보기</a><span class="b fail">검증 FAIL · 결함 2</span><span class="b pass">평가 91점 PASS</span></div>
+<ul><li>바뀐 점: 카드 열 수를 브랜드 수에 맞춤, 단일 브랜드 표에 막대 열, 모바일 짧은 날짜, 범례 줄바꿈, 조사 자동 처리, 대비 개선</li>
+<li>검증자: '전월와' 같은 조사 오류, 브랜드 3개일 때 641~800px에서 카드 이름이 사라짐</li>
+<li>평가자 남은 제안: 4열 카드 높이 통일, 모바일 표 머리글 고정, 모바일 컨트롤 한 줄화</li></ul></div>
+
+<div class="v"><div class="top"><h2>v5 · 최종 (현재 대시보드)</h2><a href="../">열어보기</a></div>
+<ul><li>바뀐 점: 3라운드 검증자 결함 2건 수정, 4열 카드 증감 배지 위치 통일</li>
+<li>최대 3라운드를 다 써서 별도 재검토는 하지 않았고, 같은 테스트(전 화면 크기·모든 버튼·조사 문장·3개 브랜드 배치)로 직접 확인했어요</li></ul></div>
+</div></body></html>
