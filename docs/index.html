@@ -19,7 +19,8 @@
   --accent: #2a78d6;
   --accent-ink: #ffffff;
   --accent-soft: #e6f0fb;
-  --up: #d63a3a;
+  --accent-text: #1f63b8;
+  --up: #c22e2e;
   --up-soft: #fdeceb;
   --down: #2a63c4;
   --down-soft: #e8effb;
@@ -33,7 +34,7 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #0e1116; --surface: #161b22; --surface-2: #1d232c; --ink: #eef1f5; --ink-2: #b8c0cc; --ink-3: #8b95a3; --line: #2a313b;
-    --accent: #3987e5; --accent-ink: #ffffff; --accent-soft: #17283d; --up: #f07070; --up-soft: #3a1d1f; --down: #6ea2f2; --down-soft: #1a2a42;
+    --accent: #3987e5; --accent-ink: #ffffff; --accent-soft: #17283d; --accent-text: #8cbaf3; --up: #f07070; --up-soft: #3a1d1f; --down: #6ea2f2; --down-soft: #1a2a42;
     --warn-bg: #3a2c0c; --warn-ink: #f5c75e; --shadow: none;
     --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181; --s6: #008300; --s7: #9085e9; --s8: #e66767;
     color-scheme: dark;
@@ -41,7 +42,7 @@
 }
 :root[data-theme="dark"] {
   --bg: #0e1116; --surface: #161b22; --surface-2: #1d232c; --ink: #eef1f5; --ink-2: #b8c0cc; --ink-3: #8b95a3; --line: #2a313b;
-  --accent: #3987e5; --accent-ink: #ffffff; --accent-soft: #17283d; --up: #f07070; --up-soft: #3a1d1f; --down: #6ea2f2; --down-soft: #1a2a42;
+  --accent: #3987e5; --accent-ink: #ffffff; --accent-soft: #17283d; --accent-text: #8cbaf3; --up: #f07070; --up-soft: #3a1d1f; --down: #6ea2f2; --down-soft: #1a2a42;
   --warn-bg: #3a2c0c; --warn-ink: #f5c75e; --shadow: none;
   --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181; --s6: #008300; --s7: #9085e9; --s8: #e66767;
   color-scheme: dark;
@@ -72,7 +73,7 @@ h1 { margin: 0; font-size: 1.25rem; font-weight: 700; letter-spacing: -0.02em; }
 .meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; font-size: .875rem; color: var(--ink-3); }
 .pill { display: inline-flex; align-items: center; gap: 4px; font-size: .75rem; font-weight: 600; padding: 3px 10px; border-radius: 999px; white-space: nowrap; }
 .pill.demo { background: var(--warn-bg); color: var(--warn-ink); }
-.pill.live { background: var(--accent-soft); color: var(--accent); }
+.pill.live { background: var(--accent-soft); color: var(--accent-text); }
 
 /* 컨트롤 바: 화면 위에 고정 */
 .controls { position: sticky; top: 0; z-index: 20; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: saturate(1.4) blur(10px); -webkit-backdrop-filter: saturate(1.4) blur(10px); border-bottom: 1px solid var(--line); padding-top: env(safe-area-inset-top, 0px); }
@@ -110,14 +111,19 @@ h2 { margin: 0; font-size: 1.0625rem; font-weight: 700; letter-spacing: -0.02em;
 
 /* 브랜드 카드 */
 .brands { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+.brands.n2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.brands.n3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.brands.n4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (min-width: 1100px) { .brands.n4 { grid-template-columns: repeat(4, minmax(0, 1fr)); } .brands.n4 .big { font-size: 1.75rem; } .brands.n4 .hint-txt { display: none; } }
 .brand { display: grid; gap: 10px; position: relative; text-align: left; font: inherit; color: inherit; cursor: pointer; transition: border-color .15s, opacity .15s; }
 .brand:hover { border-color: color-mix(in srgb, var(--ink-3) 50%, var(--line)); }
 .brand[aria-pressed="false"] { background: var(--surface-2); box-shadow: none; }
 .brand[aria-pressed="false"] .big { color: var(--ink-3); }
-.brand[aria-pressed="false"] .spark, .brand[aria-pressed="false"] .device-bar, .brand[aria-pressed="false"] .delta { filter: grayscale(1); opacity: .5; }
+.brand[aria-pressed="false"] .spark, .brand[aria-pressed="false"] .device-bar { filter: grayscale(1); opacity: .5; }
+.brand[aria-pressed="false"] .delta { filter: grayscale(1); }
 .brand-top { display: flex; align-items: center; gap: 8px; min-width: 0; }
 .brand-name { font-weight: 700; font-size: 1rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
-.tag { font-size: .75rem; font-weight: 700; color: var(--accent); background: var(--accent-soft); padding: 2px 8px; border-radius: 999px; flex: none; }
+.tag { font-size: .75rem; font-weight: 700; color: var(--accent-text); background: var(--accent-soft); padding: 2px 8px; border-radius: 999px; flex: none; }
 .toggle-hint { margin-left: auto; display: inline-flex; align-items: center; gap: 4px; font-size: .8125rem; font-weight: 600; color: var(--ink-3); flex: none; }
 .toggle-hint svg { width: 16px; height: 16px; }
 .brand-val { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; }
@@ -160,10 +166,14 @@ th, td { padding: 10px 12px; text-align: right; white-space: nowrap; border-bott
 th { font-size: .875rem; font-weight: 600; color: var(--ink-3); background: var(--surface); position: sticky; top: 0; }
 th:first-child, td:first-child { text-align: left; position: sticky; left: 0; background: var(--surface); z-index: 1; padding-left: 20px; }
 th:last-child, td:last-child { padding-right: 20px; }
-table.narrow { max-width: 760px; }
+
 tbody tr:hover td { background: var(--surface-2); }
 td.partial { color: var(--ink-3); }
-.th-brand { display: inline-flex; align-items: center; gap: 6px; }
+.th-brand { display: inline-flex; align-items: center; justify-content: flex-end; gap: 6px; white-space: normal; max-width: 9em; text-align: right; line-height: 1.3; }
+.th-brand .dot { flex: none; }
+.lbl-short { display: none; }
+.bar-cell { width: 40%; min-width: 120px; }
+.bar-cell i { display: block; height: 8px; border-radius: 4px; opacity: .85; }
 .share-cell { display: inline-block; min-width: 7ch; text-align: right; color: var(--ink-3); font-size: .875rem; margin-left: 6px; }
 .chg-cell { display: inline-block; min-width: 7.5ch; text-align: right; font-size: .875rem; font-weight: 600; margin-left: 8px; }
 .chg-cell.up { color: var(--up); } .chg-cell.down { color: var(--down); } .chg-cell.flat { color: var(--ink-3); }
@@ -183,20 +193,25 @@ td.partial { color: var(--ink-3); }
   .table-scroll { margin: 0 -16px; }
   th:first-child, td:first-child { padding-left: 16px; }
   th:last-child, td:last-child { padding-right: 16px; }
-  .controls .inner { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; overflow: visible; padding-block: 8px; }
-  .ctl { min-width: 0; }
-  .ctl .seg { width: 100%; }
-  .ctl .seg button { flex: 1; padding: 0 6px; min-height: 42px; }
-  #range-ctl { grid-column: 1 / -1; order: 3; }
-  .legend { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; width: 100%; margin: 0 -16px; padding: 0 16px; }
-  .legend::-webkit-scrollbar { display: none; }
-  .chip { flex: none; max-width: 11em; }
+  .legend { gap: 6px; width: 100%; }
+  .chip { min-height: 28px; padding: 3px 10px; font-size: .8125rem; max-width: 9em; }
   .empty { padding: 14px 16px; }
   .headline { font-size: 1.1875rem; }
   .big { font-size: 1.75rem; }
   .chart-box { height: 300px; }
+  .lbl-long { display: none; } .lbl-short { display: inline; }
+  .th-brand { max-width: 6.5em; }
+  .badge-live { display: block; width: fit-content; margin: 2px 0 0; }
+  .bar-cell { min-width: 64px; }
+  .brands, .brands.n2, .brands.n3, .brands.n4 { grid-template-columns: 1fr; gap: 12px; }
+}
+@media (max-width: 760px) {
   .ctl-label { display: none; }
-  .brands { grid-template-columns: 1fr; gap: 12px; }
+  .controls .inner { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; overflow: visible; padding-block: 6px; }
+  .ctl { min-width: 0; }
+  .ctl .seg { width: 100%; }
+  .ctl .seg button { flex: 1; padding: 0 6px; min-height: 40px; }
+  #range-ctl { grid-column: 1 / -1; order: 3; }
 }
 @media (max-width: 820px) {
   .share-cell, .chg-cell { display: block; margin-left: 0; font-size: .8125rem; }
@@ -355,6 +370,14 @@ td.partial { color: var(--ink-3); }
   }
 
   /* ---------- 그리기 ---------- */
+  // 숫자 끝 글자 읽음에 맞춘 조사: 받침(0,1,3,6,7,8)·ㄹ받침(1,7,8)
+  function josa(text, withB, without, rieulOk) {
+    const ch = String(text).replace(/[^0-9가-힣]/g, "").slice(-1);
+    let batchim, rieul = false;
+    if (/[0-9]/.test(ch)) { batchim = "013678".includes(ch); rieul = "178".includes(ch); }
+    else { const c = ch.charCodeAt(0) - 0xac00; batchim = c >= 0 && c % 28 > 0; rieul = c % 28 === 8; }
+    return text + (batchim && !(rieulOk && rieul) ? withB : without);
+  }
   const fmtVal = (v, metric) => v == null ? "–" : metric === "abs" ? fmt.format(v) : fmt1.format(v);
   function deltaHTML(cur, prev) {
     if (cur == null || !prev) return `<span class="delta flat">비교 불가</span>`;
@@ -396,8 +419,11 @@ td.partial { color: var(--ink-3); }
     if (rows.length === 1) {
       const r = rows[0];
       let c = r.cur != null && r.prev ? (r.cur - r.prev) / r.prev * 100 : null;
-      headline = `${lastW}(${esc(periodName)}) <strong>${esc(r.g.name)}</strong> ${b.metric === "abs" ? "검색 수는" : "트렌드 지수는"} <strong class="num">${fmtVal(r.cur, b.metric)}${b.metric === "abs" ? "회" : ""}</strong>` +
-        (c == null ? "예요." : Math.abs(c) < 0.05 ? `로 ${prevW}와 같아요.` : `로 ${prevW}보다 <strong class="${c > 0 ? "up" : "down"} num">${fmt1.format(Math.abs(c))}% ${c > 0 ? "늘었어요" : "줄었어요"}</strong>.`);
+      const vtxt = fmtVal(r.cur, b.metric) + (b.metric === "abs" && r.cur != null ? "회" : "");
+      const lead = `${lastW}(${esc(periodName)}) <strong>${esc(r.g.name)}</strong> ${b.metric === "abs" ? "검색 수는" : "트렌드 지수는"} `;
+      headline = c == null ? lead + `<strong class="num">${josa(vtxt, "이에요", "예요")}</strong>.`
+        : Math.abs(c) < 0.05 ? lead + `<strong class="num">${josa(vtxt, "으로", "로", true)}</strong> ${prevW}와 같아요.`
+        : lead + `<strong class="num">${josa(vtxt, "으로", "로", true)}</strong> ${prevW}보다 <strong class="${c > 0 ? "up" : "down"} num">${fmt1.format(Math.abs(c))}% ${c > 0 ? "늘었어요" : "줄었어요"}</strong>.`;
     } else {
       const top = rows.filter(r => r.cur != null).sort((a, z) => z.cur - a.cur)[0];
       const movers = rows.filter(r => r.cur != null && r.prev).map(r => ({ ...r, c: (r.cur - r.prev) / r.prev * 100 })).sort((a, z) => Math.abs(z.c) - Math.abs(a.c));
@@ -405,7 +431,7 @@ td.partial { color: var(--ink-3); }
       headline = (top && b.metric === "abs") ? `${lastW}(${esc(periodName)}) 가장 많이 검색된 브랜드는 <strong>${esc(top.g.name)}</strong>예요.` : "";
       const m = movers[0];
       if (m) headline += Math.abs(m.c) < 0.05
-        ? ` ${prevW}와 비교해 크게 달라진 브랜드는 없어요.`
+        ? `${headline ? " " : `${lastW}(${esc(periodName)}) `}${prevW}와 비교해 크게 달라진 브랜드는 없어요.`
         : `${headline ? " " : `${lastW}(${esc(periodName)}) `}${prevW} 대비 가장 크게 변한 곳은 <strong>${esc(m.g.name)}</strong>(<span class="${m.c > 0 ? "up" : "down"} num">${m.c > 0 ? "+" : "−"}${fmt1.format(Math.abs(m.c))}%</span>)예요.`;
       if (!headline) headline = `${lastW} 데이터가 아직 충분하지 않아요.`;
     }
@@ -428,7 +454,7 @@ td.partial { color: var(--ink-3); }
     let html = "", notes = "";
     for (const g of data.groups) {
       if (!data.series[g.id] || !data.series[g.id].length) {
-        notes += `<div class="card empty"><div class="brand-top"><span class="dot" style="background:${colorOf(g)}"></span><span class="brand-name">${esc(g.name)}</span>${g.is_mine ? '<span class="tag">내 브랜드</span>' : ""}</div>
+        notes += `<div class="card empty"><div class="brand-top"><span class="dot" style="background:${colorOf(g)}"></span><span class="brand-name">${esc(g.name)}</span>${g.is_mine && g.name !== "내 브랜드" ? '<span class="tag">내 브랜드</span>' : ""}</div>
           <p>${g.is_mine ? "우리 브랜드 이름이 정해지면 검색어를 알려 주세요. 다음 날 아침부터 함께 비교돼요." : "아직 검색어가 등록되지 않았어요. 검색어를 추가하면 다음 날 아침부터 나타나요."}</p></div>`;
         continue;
       }
@@ -436,7 +462,7 @@ td.partial { color: var(--ink-3); }
       const sa = g.searchad ? Object.values(g.searchad) : null;
       const pc = sa ? sa.reduce((s, v) => s + v.pc, 0) : 0, mob = sa ? sa.reduce((s, v) => s + v.mobile, 0) : 0;
       html += `<button type="button" class="card brand" data-id="${esc(g.id)}" aria-pressed="${on}" title="눌러서 그래프에서 ${on ? "숨기기" : "보이기"}">
-        <div class="brand-top"><span class="dot" style="background:${colorOf(g)}"></span><span class="brand-name">${esc(g.name)}</span>${g.is_mine ? '<span class="tag">내 브랜드</span>' : ""}<span class="toggle-hint">${on ? EYE : EYE_OFF}${on ? "그래프 표시" : "숨김"}</span></div>
+        <div class="brand-top"><span class="dot" style="background:${colorOf(g)}"></span><span class="brand-name">${esc(g.name)}</span>${g.is_mine && g.name !== "내 브랜드" ? '<span class="tag">내 브랜드</span>' : ""}<span class="toggle-hint">${on ? EYE : EYE_OFF}<span class="hint-txt">${on ? "그래프 표시" : "숨김"}</span></span></div>
         <div class="brand-val"><span class="big num">${fmtVal(cur, b.metric)}</span><span class="unit">${b.metric === "abs" ? "회" : "지수"} · ${lastW}</span>${deltaHTML(cur, prev)}</div>
         ${sparkSVG(L.trail.map(b.val), colorOf(g))}
         <div class="brand-foot"><span>${prevW} <b class="num">${fmtVal(prev, b.metric)}</b></span>${g.monthly_searches != null && b.metric === "abs" ? `<span>최근 30일 <b class="num">${fmt.format(g.monthly_searches)}회</b></span>` : ""}</div>
@@ -444,6 +470,7 @@ td.partial { color: var(--ink-3); }
       </button>`;
     }
     el.innerHTML = html;
+    el.className = "brands n" + Math.min(b.groups.length, 5);
     document.getElementById("notices").innerHTML = notes;
     el.querySelectorAll("button.brand").forEach(btn => btn.addEventListener("click", () => toggle(btn.dataset.id)));
   }
@@ -499,7 +526,7 @@ td.partial { color: var(--ink-3); }
           },
         },
         scales: {
-          x: { ticks: { color: muted, font, maxRotation: 0, autoSkip: true, autoSkipPadding: 24 }, grid: { display: false }, border: { color: grid } },
+          x: { ticks: { color: muted, font, maxRotation: 0, autoSkip: true, autoSkipPadding: 24, maxTicksLimit: narrow ? 5 : 8 }, grid: { display: false }, border: { color: grid } },
           y: { beginAtZero: true, ticks: { color: muted, font, maxTicksLimit: 6, callback: v => fmt.format(v) }, grid: { color: grid }, border: { display: false } },
         },
       },
@@ -517,7 +544,9 @@ td.partial { color: var(--ink-3); }
     const keys = b.keys.slice(-12).reverse();
     const multi = b.metric === "abs" && b.groups.length > 1;
     document.getElementById("table-sub").textContent = `최근 ${keys.length}개 ${unitWords[state.unit][2].replace("별", "")} 단위` + (multi ? " · 괄호는 점유율" : " · 화살표는 바로 앞 기간 대비");
-    const head = `<tr><th scope="col">기간</th>${b.groups.map(g => `<th scope="col"><span class="th-brand"><span class="dot" style="background:${colorOf(g)}"></span>${esc(g.name)}</span></th>`).join("")}</tr>`;
+    const single = b.groups.length === 1;
+    const maxV = Math.max(1, ...keys.map(k => b.val(b.per[b.groups[0].id].find(p => p.key === k)) || 0));
+    const head = `<tr><th scope="col">기간</th>${b.groups.map(g => `<th scope="col"><span class="th-brand"><span class="dot" style="background:${colorOf(g)}"></span>${esc(g.name)}</span></th>`).join("")}${single ? '<th scope="col" class="bar-cell"><span class="sr">상대 크기</span></th>' : ""}</tr>`;
     const rows = keys.map(k => {
       const pts = b.groups.map(g => b.per[g.id].find(p => p.key === k));
       const vals = pts.map(b.val);
@@ -525,20 +554,19 @@ td.partial { color: var(--ink-3); }
       const prevVals = b.groups.map(g => pk ? b.val(b.per[g.id].find(p => p.key === pk)) : null);
       const total = vals.reduce((s, v) => s + (v || 0), 0);
       const partial = pts.some(p => p && !p.complete);
-      return `<tr><td class="${partial ? "partial" : ""}">${periodLabel(k, state.unit, true)}${partial ? '<span class="badge-live">진행 중</span>' : ""}</td>` +
+      return `<tr><td class="${partial ? "partial" : ""}"><span class="lbl-long">${periodLabel(k, state.unit, true)}</span><span class="lbl-short">${periodLabel(k, state.unit)}</span>${partial ? '<span class="badge-live">진행 중</span>' : ""}</td>` +
         vals.map((v, i) => {
           let extra = "";
           if (multi && total) extra = `<span class="share-cell">(${fmt1.format((v || 0) / total * 100)}%)</span>`;
           else if (!partial && v != null && prevVals[i]) {
             const c = (v - prevVals[i]) / prevVals[i] * 100, cls = Math.abs(c) < 0.05 ? "flat" : c > 0 ? "up" : "down";
-            extra = `<span class="chg-cell ${cls}">${cls === "flat" ? "0.0%" : (c > 0 ? "▲" : "▼") + fmt1.format(Math.abs(c)) + "%"}</span>`;
+            extra = `<span class="chg-cell ${cls}">${cls === "flat" ? "0.0%" : `<span aria-hidden="true">${c > 0 ? "▲" : "▼"}</span>` + fmt1.format(Math.abs(c)) + `%<span class="sr">${c > 0 ? " 증가" : " 감소"}</span>`}</span>`;
           }
           return `<td class="num${partial ? " partial" : ""}">${fmtVal(v, b.metric)}${extra}</td>`;
-        }).join("") + `</tr>`;
+        }).join("") + (single ? `<td class="bar-cell" aria-hidden="true"><i style="width:${Math.max(2, (vals[0] || 0) / maxV * 100)}%;background:${colorOf(b.groups[0])}${partial ? ";opacity:.35" : ""}"></i></td>` : "") + `</tr>`;
     }).join("");
     const t = document.getElementById("table");
     t.innerHTML = `<thead>${head}</thead><tbody>${rows}</tbody>`;
-    t.classList.toggle("narrow", b.groups.length <= 2);
     updateScrollCue();
   }
 
@@ -551,6 +579,8 @@ td.partial { color: var(--ink-3); }
   }
   document.getElementById("table-scroll").addEventListener("scroll", updateScrollCue, { passive: true });
   window.addEventListener("resize", () => { if (ready()) updateScrollCue(); });
+  if (window.ResizeObserver) new ResizeObserver(() => { if (ready()) updateScrollCue(); }).observe(document.getElementById("table"));
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (ready()) { updateScrollCue(); if (chart) chart.resize(); } });
 
   function syncButtons() {
     for (const id of ["unit", "range", "metric"]) {
