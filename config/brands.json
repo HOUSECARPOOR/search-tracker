@@ -14,7 +14,19 @@
       "name": "그린펀치 샐러드",
       "is_mine": false,
       "color": "#2f9e44",
-      "keywords": ["그린펀치", "그린펀치샐러드", "그린펀치 샐러드"]
+      "keywords": [
+        "그린펀치",
+        "그린펀치샐러드",
+        "그린펀치 샐러드"
+      ]
+    },
+    {
+      "id": "bmvaojt9p",
+      "name": "비피젠",
+      "is_mine": false,
+      "keywords": [
+        "비피젠"
+      ]
     }
   ]
 }
