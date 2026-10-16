@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="data-url" content="data/daily.json">
+<meta name="gh-repo" content="HOUSECARPOOR/search-tracker">
 <title>브랜드 검색량 비교</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
@@ -219,6 +220,76 @@ td.partial { color: var(--ink-3); }
 @media (max-width: 820px) {
   .share-cell, .chg-cell { display: block; margin-left: 0; font-size: .8125rem; }
 }
+
+/* 브랜드 관리 */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; font: inherit; font-size: .875rem; font-weight: 600; min-height: 40px; padding: 0 16px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; white-space: nowrap; text-decoration: none; }
+.btn:hover:not([disabled]) { background: var(--surface-2); }
+.btn svg { width: 16px; height: 16px; flex: none; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn.primary:hover:not([disabled]) { background: var(--accent); filter: brightness(1.08); }
+.btn.ghost { border-color: transparent; background: transparent; color: var(--ink-2); }
+.btn.danger { color: var(--up); }
+.btn.sm { min-height: 34px; padding: 0 12px; font-size: .8125rem; }
+.btn[disabled] { opacity: .45; cursor: not-allowed; }
+.btn:focus-visible, .field input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.sync { display: flex; align-items: flex-start; gap: 12px; padding: 14px 18px; border-radius: var(--radius); background: var(--accent-soft); color: var(--accent-text); font-size: .9375rem; font-weight: 600; }
+.sync[hidden] { display: none; }
+.sync.err { background: var(--up-soft); color: var(--up); }
+.sync.ok { background: var(--surface); color: var(--ink); border: 1px solid var(--line); }
+.sync p { margin: 0; flex: 1; min-width: 0; }
+.sync small { display: block; font-weight: 500; color: inherit; opacity: .85; margin-top: 2px; }
+.sync a { color: inherit; }
+.spin { width: 18px; height: 18px; border-radius: 50%; border: 2.5px solid currentColor; border-right-color: transparent; animation: spin .9s linear infinite; flex: none; margin-top: 2px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.empty .btn { margin-left: auto; }
+
+dialog.sheet { width: min(560px, calc(100vw - 32px)); max-height: min(86vh, 760px); padding: 0; border: 1px solid var(--line); border-radius: 18px; background: var(--surface); color: var(--ink); box-shadow: 0 20px 60px rgba(0,0,0,.25); overflow: hidden; }
+dialog.sheet[open] { display: flex; flex-direction: column; }
+dialog.sheet::backdrop { background: rgba(10, 14, 20, .45); }
+.sheet-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 18px 20px 14px; border-bottom: 1px solid var(--line); }
+.sheet-head h2 { font-size: 1.125rem; }
+.icon-btn { width: 40px; height: 40px; border-radius: 10px; border: 0; background: transparent; color: var(--ink-2); cursor: pointer; display: grid; place-items: center; flex: none; }
+.icon-btn:hover { background: var(--surface-2); }
+.icon-btn svg { width: 20px; height: 20px; }
+.sheet-body { padding: 16px 20px 20px; overflow-y: auto; display: grid; gap: 16px; }
+.sheet-foot { display: flex; justify-content: flex-end; gap: 8px; padding: 14px 20px; border-top: 1px solid var(--line); background: var(--surface); }
+.blist { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.bitem { display: grid; grid-template-columns: auto 1fr auto; align-items: start; gap: 4px 10px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; }
+.bitem .dot { margin-top: 8px; }
+.bitem .nm { font-weight: 700; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; min-width: 0; }
+.bitem .kws { grid-column: 2 / 3; display: flex; flex-wrap: wrap; gap: 4px; }
+.bitem .acts { grid-row: 1 / span 2; grid-column: 3; display: flex; gap: 4px; }
+.kw { font-size: .8125rem; color: var(--ink-2); background: var(--surface-2); padding: 2px 8px; border-radius: 6px; }
+.kw.none { background: transparent; color: var(--ink-3); padding: 2px 0; }
+.form { display: grid; gap: 14px; padding: 16px; border-radius: 12px; background: var(--surface-2); }
+.form h3 { margin: 0; font-size: 1rem; }
+.field { display: grid; gap: 6px; }
+.field label { font-size: .875rem; font-weight: 600; }
+.field input { font: inherit; font-size: 1rem; min-height: 44px; padding: 0 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); width: 100%; }
+.field .help { font-size: .8125rem; color: var(--ink-3); margin: 0; }
+.chips-edit { display: flex; flex-wrap: wrap; gap: 6px; }
+.chips-edit .kw { display: inline-flex; align-items: center; gap: 2px; padding: 2px 4px 2px 10px; background: var(--surface); border: 1px solid var(--line); }
+.chips-edit .kw button { border: 0; background: transparent; color: var(--ink-3); cursor: pointer; width: 24px; height: 24px; border-radius: 6px; font-size: 1rem; line-height: 1; }
+.chips-edit .kw button:hover { color: var(--up); }
+.form-acts { display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
+.msg { margin: 0; font-size: .875rem; font-weight: 600; }
+.msg.err { color: var(--up); }
+.msg:empty { display: none; }
+.steps { margin: 0; padding-left: 1.3em; font-size: .9375rem; color: var(--ink-2); display: grid; gap: 6px; }
+.steps b { color: var(--ink); }
+.steps code, .note-box code { white-space: nowrap; font-size: .8125rem; background: var(--surface); border: 1px solid var(--line); padding: 1px 6px; border-radius: 4px; }
+.note-box { font-size: .8125rem; color: var(--ink-3); margin: 0; }
+.linkish { font: inherit; font-size: .8125rem; border: 0; background: transparent; color: var(--accent-text); cursor: pointer; padding: 0; text-decoration: underline; }
+@media (max-width: 640px) {
+  dialog.sheet { width: 100vw; max-width: 100vw; max-height: 92vh; margin: auto 0 0; border-radius: 18px 18px 0 0; border-bottom: 0; }
+  .sheet-body { padding: 14px 16px 16px; }
+  .sheet-foot { padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px)); }
+  .appbar #manage-btn .lbl { display: none; }
+  .appbar #manage-btn { width: 40px; padding: 0; }
+  .appbar .inner { flex-wrap: nowrap; }
+  .bitem { grid-template-columns: auto 1fr; }
+  .bitem .acts { grid-row: auto; grid-column: 1 / -1; justify-content: flex-end; }
+}
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
 </head>
@@ -234,6 +305,9 @@ td.partial { color: var(--ink-3); }
         <div class="meta" id="meta">네이버 검색 기준</div>
       </div>
     </div>
+    <button type="button" class="btn" id="manage-btn" aria-haspopup="dialog" disabled>
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M10 4v12M4 10h12"/></svg><span class="lbl">브랜드 관리</span>
+    </button>
   </div>
 </header>
 
@@ -267,6 +341,7 @@ td.partial { color: var(--ink-3); }
   <section class="card summary" id="summary" aria-live="polite">
     <p class="headline">데이터를 불러오는 중이에요…</p>
   </section>
+  <div id="sync" class="sync" role="status" aria-live="polite" hidden></div>
   <div id="notices" class="notices"></div>
   <section class="brands" id="brands" aria-label="브랜드별 요약"></section>
   <section class="card">
@@ -286,9 +361,18 @@ td.partial { color: var(--ink-3); }
     <h2>숫자는 이렇게 만들어요</h2>
     <p><b>검색 수</b>는 네이버 검색광고가 알려주는 최근 30일 실제 검색 수(PC+모바일)를 기준으로, 네이버 검색어 트렌드의 날짜별 흐름에 맞춰 나눈 <b>추정치</b>예요. 오래된 기간일수록 오차가 커질 수 있어요.</p>
     <p><b>트렌드 지수</b>는 브랜드마다 자기 최고치를 100으로 둔 값이라 브랜드끼리 크기를 비교할 수 없어요. 흐름을 볼 때만 쓰세요.</p>
-    <p>매일 오전 9시에 자동으로 갱신돼요. 오늘 데이터는 다음 날 반영돼요.</p>
+    <p>매일 오전 9시에 자동으로 갱신돼요. 오늘 데이터는 다음 날 반영돼요. 오른쪽 위 <b>브랜드 관리</b>에서 경쟁사를 추가하면 몇 분 안에 과거 데이터까지 함께 들어와요.</p>
   </section>
 </main>
+
+
+<dialog class="sheet" id="manage" aria-labelledby="manage-title">
+  <div class="sheet-head">
+    <h2 id="manage-title">브랜드 관리</h2>
+    <button type="button" class="icon-btn" data-close aria-label="닫기"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15"/></svg></button>
+  </div>
+  <div class="sheet-body" id="manage-body"></div>
+</dialog>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script>
@@ -458,8 +542,12 @@ td.partial { color: var(--ink-3); }
     let html = "", notes = "";
     for (const g of data.groups) {
       if (!data.series[g.id] || !data.series[g.id].length) {
+        const msg = g._pending ? "데이터를 모으는 중이에요. 몇 분 뒤 자동으로 나타나요."
+          : g.is_mine ? "우리 브랜드 이름이 정해지면 검색어를 등록해 주세요. 과거 데이터까지 함께 비교돼요."
+          : "아직 검색어가 등록되지 않았어요.";
+        const act = !g._pending && !data.demo ? `<button type="button" class="btn sm" data-edit="${esc(g.id)}">검색어 등록</button>` : "";
         notes += `<div class="card empty"><div class="brand-top"><span class="dot" style="background:${colorOf(g)}"></span><span class="brand-name">${esc(g.name)}</span>${g.is_mine && g.name !== "내 브랜드" ? '<span class="tag">내 브랜드</span>' : ""}</div>
-          <p>${g.is_mine ? "우리 브랜드 이름이 정해지면 검색어를 알려 주세요. 다음 날 아침부터 함께 비교돼요." : "아직 검색어가 등록되지 않았어요. 검색어를 추가하면 다음 날 아침부터 나타나요."}</p></div>`;
+          <p>${msg}</p>${act}</div>`;
         continue;
       }
       const L = b.last[g.id], cur = b.val(L.cur), prev = b.val(L.prev), on = !state.hidden.has(g.id);
@@ -475,7 +563,9 @@ td.partial { color: var(--ink-3); }
     }
     el.innerHTML = html;
     el.className = "brands n" + Math.min(b.groups.length, 5);
-    document.getElementById("notices").innerHTML = notes;
+    const nEl = document.getElementById("notices");
+    nEl.innerHTML = notes;
+    nEl.querySelectorAll("[data-edit]").forEach(btn => btn.addEventListener("click", () => Manage.open(btn.dataset.edit)));
     el.querySelectorAll("button.brand").forEach(btn => btn.addEventListener("click", () => toggle(btn.dataset.id)));
   }
 
@@ -616,6 +706,278 @@ td.partial { color: var(--ink-3); }
   if (mq.addEventListener) mq.addEventListener("change", rerender);
   new MutationObserver(rerender).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
 
+
+  /* ---------- 브랜드 관리: GitHub에 설정을 저장하고 수집을 바로 돌린다 ---------- */
+  // 정적 페이지라 서버가 없으므로, 사용자가 만든 GitHub 토큰(이 브라우저에만 저장)으로
+  // config/brands.json을 고치고 수집 작업을 실행한다.
+  const Manage = (function () {
+    const REPO = (document.querySelector('meta[name="gh-repo"]') || {}).content || "";
+    const CFG_PATH = "config/brands.json", WORKFLOW = "collect.yml";
+    const TK = "sv-gh-token", PK = "sv-pending-cfg";
+    const dlg = document.getElementById("manage"), body = document.getElementById("manage-body");
+    const btn = document.getElementById("manage-btn");
+    let cfg = null, sha = null, view = "list", editId = null, draft = null, busy = false, watching = false;
+
+    const lsGet = k => { try { return localStorage.getItem(k); } catch (e) { return null; } };
+    const lsSet = (k, v) => { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch (e) {} };
+    const token = () => lsGet(TK) || "";
+    const b64enc = str => { const by = new TextEncoder().encode(str); let bin = ""; for (const x of by) bin += String.fromCharCode(x); return btoa(bin); };
+    const b64dec = b => new TextDecoder().decode(Uint8Array.from(atob(b.replace(/\s/g, "")), c => c.charCodeAt(0)));
+
+    async function gh(path, opt = {}) {
+      const r = await fetch(`https://api.github.com/repos/${REPO}${path}`, {
+        ...opt,
+        headers: { Accept: "application/vnd.github+json", Authorization: `Bearer ${token()}`, "X-GitHub-Api-Version": "2022-11-28", ...(opt.body ? { "Content-Type": "application/json" } : {}) },
+      });
+      if (!r.ok) {
+        let m = ""; try { m = (await r.json()).message || ""; } catch (e) {}
+        const err = new Error(m || ("HTTP " + r.status)); err.status = r.status; throw err;
+      }
+      return r.status === 204 ? null : r.json();
+    }
+    function explain(e) {
+      if (e.status === 401) return "토큰이 맞지 않거나 만료됐어요. 토큰을 다시 넣어 주세요.";
+      if (e.status === 403 || e.status === 404) return "토큰 권한이 부족해요. 저장소 접근(search-tracker)과 Contents·Actions 쓰기 권한을 확인해 주세요.";
+      if (e.status === 409) return "다른 곳에서 설정이 바뀌었어요. 창을 닫았다가 다시 열어 주세요.";
+      if (!e.status) return "GitHub에 연결하지 못했어요. 인터넷 연결을 확인해 주세요.";
+      return `저장하지 못했어요. (${e.message})`;
+    }
+
+    async function loadCfg() {
+      const f = await gh(`/contents/${CFG_PATH}?ref=main&t=${Date.now()}`);
+      sha = f.sha; cfg = JSON.parse(b64dec(f.content));
+    }
+    async function saveCfg(message) {
+      const content = b64enc(JSON.stringify(cfg, null, 2) + "\n");
+      const r = await gh(`/contents/${CFG_PATH}`, { method: "PUT", body: JSON.stringify({ message, content, sha, branch: "main" }) });
+      sha = r.content.sha;
+      const at = new Date().toISOString();
+      await gh(`/actions/workflows/${WORKFLOW}/dispatches`, { method: "POST", body: JSON.stringify({ ref: "main" }) });
+      lsSet(PK, JSON.stringify({ at, groups: cfg.groups.map(g => ({ id: g.id, name: g.name, is_mine: !!g.is_mine, keywords: g.keywords || [] })) }));
+      applyPending(); rerender();
+      watch(at);
+    }
+
+    // 저장했지만 아직 수집 전인 설정을 화면에 먼저 반영한다
+    function applyPending() {
+      if (!data) return;
+      let p = null; try { p = JSON.parse(lsGet(PK) || "null"); } catch (e) {}
+      if (!p) return;
+      const upd = Date.parse(data.updated_at);
+      const fresh = !isNaN(upd) && upd >= Date.parse(p.at) - 60e3 && p.groups.every(g => !g.keywords.length || (data.series[g.id] && data.series[g.id].length));
+      if (fresh || Date.now() - Date.parse(p.at) > 6 * 3600e3) { lsSet(PK, null); return; }
+      const old = new Map(data.groups.map(g => [g.id, g]));
+      data.groups = p.groups.map(g => {
+        const o = old.get(g.id), kwChanged = !o || (o.keywords || []).join("|") !== g.keywords.join("|");
+        return { ...(o || {}), id: g.id, name: g.name, is_mine: g.is_mine, keywords: g.keywords, _pending: g.keywords.length > 0 && (kwChanged || !data.series[g.id]) };
+      });
+      // 검색어가 바뀐 브랜드는 예전 값이 섞이지 않게 새 값이 올 때까지 비워 둔다
+      for (const g of data.groups) if (g._pending) delete data.series[g.id];
+    }
+
+    function setSync(kind, html) {
+      const el = document.getElementById("sync");
+      if (!el) return;
+      if (!kind) { el.hidden = true; el.innerHTML = ""; return; }
+      el.hidden = false; el.className = "sync" + (kind === "work" ? "" : " " + kind);
+      el.innerHTML = (kind === "work" ? '<span class="spin" aria-hidden="true"></span>' : "") + `<p>${html}</p>` +
+        (kind !== "work" ? '<button type="button" class="icon-btn" aria-label="알림 닫기" data-x><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15"/></svg></button>' : "");
+      const x = el.querySelector("[data-x]"); if (x) x.addEventListener("click", () => setSync(null));
+    }
+    const wait = ms => new Promise(r => setTimeout(r, ms));
+
+    // 수집 작업이 끝나고 새 데이터 파일이 올라올 때까지 기다렸다가 화면을 새로 그린다
+    async function watch(at) {
+      if (watching) return; watching = true;
+      const started = Date.now(), atMs = Date.parse(at);
+      let runUrl = "", runFailed = false;
+      setSync("work", `설정을 저장했어요. 네이버에서 데이터를 모으는 중이에요.<small>보통 2~4분 걸려요. 이 페이지를 닫아도 수집은 계속돼요.</small>`);
+      try {
+        while (Date.now() - started < 15 * 60e3) {
+          await wait(15000);
+          if (token() && !runUrl && !runFailed) {
+            try {
+              const r = await gh(`/actions/workflows/${WORKFLOW}/runs?event=workflow_dispatch&per_page=1&t=${Date.now()}`);
+              const run = r.workflow_runs && r.workflow_runs[0];
+              if (run && Date.parse(run.created_at) >= atMs - 60e3) {
+                if (run.status === "completed") {
+                  if (run.conclusion !== "success") { runFailed = true; runUrl = run.html_url; }
+                  else setSync("work", `데이터를 다 모았어요. 페이지에 반영되는 중이에요.<small>1~2분이면 끝나요.</small>`);
+                }
+              }
+            } catch (e) {}
+          }
+          let d = null;
+          try { d = await (await fetch(DATA_URL + (DATA_URL.includes("?") ? "&" : "?") + "t=" + Date.now(), { cache: "no-store" })).json(); } catch (e) {}
+          if (d && Date.parse(d.updated_at) >= atMs - 60e3) {
+            data = d; applyPending(); renderMeta(); rerender();
+            const still = data.groups.filter(g => g._pending);
+            if (!still.length) {
+              setSync(runFailed ? "err" : "ok", runFailed
+                ? `데이터는 반영했지만 일부 수집에 오류가 있었어요. <a href="${esc(runUrl)}" target="_blank" rel="noopener">작업 기록 보기</a>`
+                : "바뀐 브랜드 설정이 반영됐어요.");
+              return;
+            }
+          }
+          if (runFailed && Date.now() - started > 5 * 60e3) {
+            setSync("err", `수집이 실패했어요. 검색어를 확인하거나 <a href="${esc(runUrl)}" target="_blank" rel="noopener">작업 기록</a>을 열어 보세요.`);
+            return;
+          }
+        }
+        setSync("err", "생각보다 오래 걸리고 있어요. 잠시 뒤 새로고침해 보세요.");
+      } finally { watching = false; }
+    }
+
+    /* 화면 */
+    const kwParse = s => s.split(/[,\n]/).map(x => x.trim().replace(/\s+/g, " ")).filter(Boolean);
+    function suggestKw(name) {
+      const n = name.trim().replace(/\s+/g, " ");
+      if (!n) return [];
+      const out = [n]; if (n.includes(" ")) out.push(n.replace(/ /g, ""));
+      return out;
+    }
+    function draw() {
+      if (!token()) return drawToken();
+      if (!cfg) { body.innerHTML = `<p class="note-box">설정을 불러오는 중이에요…</p>`; return; }
+      if (view === "form") return drawForm();
+      const list = cfg.groups.map((g, i) => `<li class="bitem">
+          <span class="dot" style="background:${css(`--s${(i % 8) + 1}`)}"></span>
+          <span class="nm">${esc(g.name)}${g.is_mine ? '<span class="tag">내 브랜드</span>' : ""}</span>
+          <span class="kws">${(g.keywords || []).length ? g.keywords.map(k => `<span class="kw">${esc(k)}</span>`).join("") : '<span class="kw none">검색어 없음</span>'}</span>
+          <span class="acts"><button type="button" class="btn sm" data-ed="${esc(g.id)}">수정</button>${g.is_mine ? "" : `<button type="button" class="btn sm ghost danger" data-del="${esc(g.id)}" aria-label="${esc(g.name)} 삭제">삭제</button>`}</span>
+        </li>`).join("");
+      body.innerHTML = `<ul class="blist">${list}</ul>
+        <button type="button" class="btn primary" id="add-btn"${cfg.groups.length >= 16 ? " disabled" : ""}><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M10 4v12M4 10h12"/></svg>경쟁사 추가</button>
+        <p class="msg err" id="list-msg"></p>
+        <p class="note-box">바꾼 내용은 바로 저장되고, 네이버에서 과거 데이터까지 다시 모아요. <button type="button" class="linkish" id="forget">이 기기에서 토큰 지우기</button></p>`;
+      body.querySelector("#add-btn").addEventListener("click", () => { editId = null; draft = { name: "", keywords: [] }; view = "form"; draw(); });
+      body.querySelectorAll("[data-ed]").forEach(b => b.addEventListener("click", () => startEdit(b.dataset.ed)));
+      body.querySelectorAll("[data-del]").forEach(b => b.addEventListener("click", () => del(b.dataset.del, b)));
+      body.querySelector("#forget").addEventListener("click", () => { lsSet(TK, null); cfg = null; draw(); });
+    }
+    function startEdit(id) {
+      const g = cfg.groups.find(x => x.id === id); if (!g) return;
+      editId = id; draft = { name: g.name, keywords: [...(g.keywords || [])] }; view = "form"; draw();
+    }
+    function drawForm() {
+      const g = editId ? cfg.groups.find(x => x.id === editId) : null;
+      const title = !g ? "경쟁사 추가" : g.is_mine ? "내 브랜드 수정" : "브랜드 수정";
+      body.innerHTML = `<form class="form" id="bform" novalidate>
+          <h3>${title}</h3>
+          <div class="field"><label for="f-name">브랜드 이름</label>
+            <input id="f-name" autocomplete="off" maxlength="30" placeholder="예: 그린펀치 샐러드" value="${esc(draft.name)}"></div>
+          <div class="field"><label for="f-kw">검색어</label>
+            <div class="chips-edit" id="kw-chips"></div>
+            <input id="f-kw" autocomplete="off" placeholder="검색어 입력 후 Enter (쉼표로 여러 개)" enterkeyhint="done">
+            <p class="help">사람들이 네이버에 실제로 치는 표현을 넣어 주세요. 띄어쓴 것과 붙여 쓴 것을 둘 다 넣으면 좋아요. 최대 20개.</p></div>
+          <p class="msg err" id="f-msg"></p>
+          <div class="form-acts">
+            <button type="button" class="btn ghost" id="f-cancel">취소</button>
+            <button type="submit" class="btn primary" id="f-save">${g ? "저장" : "추가하기"}</button>
+          </div>
+        </form>`;
+      const nameI = body.querySelector("#f-name"), kwI = body.querySelector("#f-kw"), chips = body.querySelector("#kw-chips"), msg = body.querySelector("#f-msg");
+      let autoKw = !g && !draft.keywords.length;
+      const drawChips = () => {
+        chips.innerHTML = draft.keywords.map((k, i) => `<span class="kw">${esc(k)}<button type="button" data-i="${i}" aria-label="${esc(k)} 빼기">×</button></span>`).join("");
+        chips.querySelectorAll("button").forEach(b => b.addEventListener("click", () => { draft.keywords.splice(+b.dataset.i, 1); autoKw = false; drawChips(); }));
+      };
+      const addKw = () => {
+        const add = kwParse(kwI.value); if (!add.length) return false;
+        for (const k of add) if (!draft.keywords.some(x => x.toLowerCase() === k.toLowerCase())) draft.keywords.push(k);
+        draft.keywords = draft.keywords.slice(0, 20); kwI.value = ""; autoKw = false; drawChips(); return true;
+      };
+      nameI.addEventListener("input", () => { draft.name = nameI.value; msg.textContent = ""; if (autoKw) { draft.keywords = suggestKw(nameI.value); drawChips(); } });
+      kwI.addEventListener("keydown", e => { if (e.key === "Enter" && !e.isComposing) { e.preventDefault(); addKw(); } });
+      kwI.addEventListener("input", () => { if (/,/.test(kwI.value)) addKw(); });
+      body.querySelector("#f-cancel").addEventListener("click", () => { view = "list"; draw(); });
+      body.querySelector("#bform").addEventListener("submit", async e => {
+        e.preventDefault(); addKw();
+        const name = nameI.value.trim().replace(/\s+/g, " ");
+        if (!name) { msg.textContent = "브랜드 이름을 입력해 주세요."; nameI.focus(); return; }
+        if (cfg.groups.some(x => x.id !== editId && x.name === name)) { msg.textContent = "같은 이름의 브랜드가 이미 있어요."; nameI.focus(); return; }
+        if (!draft.keywords.length && !(g && g.is_mine)) { msg.textContent = "검색어를 하나 이상 넣어 주세요."; kwI.focus(); return; }
+        const saveBtn = body.querySelector("#f-save"); saveBtn.disabled = true; saveBtn.textContent = "저장하는 중…"; msg.textContent = "";
+        try {
+          await loadCfg();
+          if (g) {
+            const t = cfg.groups.find(x => x.id === editId);
+            if (!t) throw Object.assign(new Error("gone"), { status: 409 });
+            t.name = name; t.keywords = [...draft.keywords];
+          } else {
+            cfg.groups.push({ id: "b" + Date.now().toString(36), name, is_mine: false, keywords: [...draft.keywords] });
+          }
+          await saveCfg(g ? `브랜드 수정: ${name}` : `경쟁사 추가: ${name}`);
+          view = "list"; dlg.close();
+        } catch (err) {
+          msg.textContent = explain(err); saveBtn.disabled = false; saveBtn.textContent = g ? "저장" : "추가하기";
+        }
+      });
+      drawChips();
+      (g ? kwI : nameI).focus();
+    }
+    async function del(id, b) {
+      const g = cfg.groups.find(x => x.id === id); if (!g || busy) return;
+      if (!confirm(`'${g.name}'을(를) 목록에서 지울까요? 쌓인 데이터도 다음 수집 때 함께 사라져요.`)) return;
+      busy = true; b.disabled = true; b.textContent = "지우는 중…";
+      try {
+        await loadCfg();
+        cfg.groups = cfg.groups.filter(x => x.id !== id);
+        await saveCfg(`브랜드 삭제: ${g.name}`);
+        draw();
+      } catch (err) { draw(); const m = body.querySelector("#list-msg"); if (m) m.textContent = explain(err); }
+      finally { busy = false; }
+    }
+    function drawToken() {
+      body.innerHTML = `<div class="form">
+          <h3>처음 한 번만 연결해 주세요</h3>
+          <p class="note-box" style="font-size:.9375rem;color:var(--ink-2)">이 대시보드는 GitHub에 저장돼 있어서, 브랜드를 바꾸려면 GitHub 열쇠(토큰)가 필요해요. 토큰은 이 브라우저에만 저장돼요.</p>
+          <ol class="steps">
+            <li><a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener"><b>토큰 만들기 페이지</b></a>를 열어요.</li>
+            <li><b>Token name</b>에 <code>search-tracker</code>, <b>Expiration</b>은 원하는 기간(예: 1년)을 골라요.</li>
+            <li><b>Repository access</b>에서 <b>Only select repositories</b> → <code>search-tracker</code>를 골라요.</li>
+            <li><b>Permissions</b>에서 <b>Contents</b>와 <b>Actions</b>를 각각 <b>Read and write</b>로 바꿔요.</li>
+            <li>맨 아래 <b>Generate token</b>을 누르고, 나온 토큰(<code>github_pat_</code>로 시작)을 복사해 아래에 붙여 넣어요.</li>
+          </ol>
+          <div class="field"><label for="f-token">GitHub 토큰</label>
+            <input id="f-token" type="password" autocomplete="off" spellcheck="false" placeholder="github_pat_…"></div>
+          <p class="msg err" id="t-msg"></p>
+          <div class="form-acts"><button type="button" class="btn primary" id="t-save">연결하기</button></div>
+        </div>`;
+      const inp = body.querySelector("#f-token"), m = body.querySelector("#t-msg"), sb = body.querySelector("#t-save");
+      const go = async () => {
+        const v = inp.value.trim();
+        if (!v) { m.textContent = "토큰을 붙여 넣어 주세요."; return; }
+        lsSet(TK, v); sb.disabled = true; sb.textContent = "확인하는 중…"; m.textContent = "";
+        try { await loadCfg(); view = "list"; draw(); }
+        catch (e) { lsSet(TK, null); m.textContent = explain(e); sb.disabled = false; sb.textContent = "연결하기"; }
+      };
+      sb.addEventListener("click", go);
+      inp.addEventListener("keydown", e => { if (e.key === "Enter") go(); });
+      inp.focus();
+    }
+
+    async function open(id) {
+      if (!dlg.open) dlg.showModal();
+      view = "list"; editId = null; draw();
+      if (!token()) return;
+      try { await loadCfg(); if (id) startEdit(id); else draw(); }
+      catch (e) { if (e.status === 401) { lsSet(TK, null); draw(); } else body.innerHTML = `<p class="msg err">${esc(explain(e))}</p>`; }
+    }
+    dlg.querySelector("[data-close]").addEventListener("click", () => dlg.close());
+    dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });
+    btn.addEventListener("click", () => open());
+
+    function init() {
+      btn.disabled = !!data.demo || !REPO;
+      btn.title = data.demo ? "예시 페이지에서는 바꿀 수 없어요" : "";
+      applyPending();
+      let p = null; try { p = JSON.parse(lsGet(PK) || "null"); } catch (e) {}
+      if (p) watch(p.at);
+    }
+    return { open, init };
+  })();
+
   function fail(msg) {
     failed = true;
     const app = document.getElementById("app");
@@ -627,6 +989,7 @@ td.partial { color: var(--ink-3); }
     .then(d => {
       data = d;
       if (!data.has_absolute) state.metric = "ratio";
+      Manage.init();
       renderMeta();
       if (typeof Chart === "undefined") { fail("그래프 도구를 불러오지 못했어요. 인터넷 연결을 확인하고 새로고침해 주세요."); return; }
       render();

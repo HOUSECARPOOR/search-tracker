@@ -167,7 +167,13 @@ def main():
             continue
 
         print(f"[수집] {g['name']} 데이터랩 {start}~{end}")
-        ratios = datalab_daily(g["keywords"], g["name"], start, end)
+        try:
+            ratios = datalab_daily(g["keywords"], g["name"], start, end)
+        except ApiError as e:
+            # 한 브랜드가 실패해도 나머지는 저장한다.
+            print(f"[경고] {g['name']} 검색어 트렌드 실패, 건너뜁니다: {e}")
+            searchad_errors.append(str(e))
+            continue
 
         monthly = None
         if has_searchad:
@@ -206,7 +212,7 @@ def main():
     print(f"[완료] {OUT.relative_to(ROOT)} 저장")
     if searchad_errors:
         # 데이터는 저장하되, 실패를 알 수 있게 작업은 실패로 끝낸다.
-        sys.exit("검색광고 API 오류가 있었습니다. 위 [경고]를 확인하세요.")
+        sys.exit("API 오류가 있었습니다. 위 [경고]를 확인하세요.")
 
 
 if __name__ == "__main__":

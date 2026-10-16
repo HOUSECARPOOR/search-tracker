@@ -8,6 +8,11 @@ on:
 permissions:
   contents: write
 
+# 대시보드에서 브랜드를 연달아 바꿔도 수집이 겹치지 않게 차례로 실행
+concurrency:
+  group: collect
+  cancel-in-progress: false
+
 jobs:
   collect:
     runs-on: ubuntu-latest
@@ -30,6 +35,7 @@ jobs:
           git config user.email "search-bot@users.noreply.github.com"
           git add docs/data
           git diff --cached --quiet || git commit -m "검색량 데이터 갱신 $(date -u +%F)"
+          git pull --rebase origin main
           git push
       - name: 수집 오류 알림
         if: env.COLLECT_FAILED == '1'
