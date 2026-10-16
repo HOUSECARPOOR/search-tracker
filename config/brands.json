@@ -1,0 +1,20 @@
+{
+  "_설명": "추적할 브랜드 목록. keywords에 네이버에서 사람들이 검색하는 표현을 넣으세요(최대 20개). is_mine=true는 내 브랜드입니다. keywords가 비어 있으면 수집을 건너뜁니다.",
+  "start_date": "2016-01-01",
+  "groups": [
+    {
+      "id": "mine",
+      "name": "내 브랜드",
+      "is_mine": true,
+      "color": "#3b5bdb",
+      "keywords": []
+    },
+    {
+      "id": "greenpunch",
+      "name": "그린펀치 샐러드",
+      "is_mine": false,
+      "color": "#2f9e44",
+      "keywords": ["그린펀치", "그린펀치샐러드", "그린펀치 샐러드"]
+    }
+  ]
+}

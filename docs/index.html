@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>브랜드 검색량 비교</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* 레이아웃: 위에서 아래로 컨트롤 → 브랜드별 요약 → 추이 차트 → 기간별 표. 한 줄 요약이 먼저, 상세는 아래. */
+:root {
+  --bg: #f6f8f5;
+  --surface: #ffffff;
+  --fg: #1c2420;
+  --muted: #5d6b63;
+  --line: #dfe5e0;
+  --accent: #1f6f4a;
+  --accent-soft: #e3f0e8;
+  --up: #1f7a45;
+  --down: #c2410c;
+  --warn-bg: #fff1d6;
+  --warn-fg: #8a5300;
+  --font-body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --font-data: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111613; --surface: #18201b; --fg: #e5ece7; --muted: #94a39a; --line: #2a352e;
+    --accent: #5fc28d; --accent-soft: #1d3327; --up: #5fc28d; --down: #fb923c; --warn-bg: #3a2b10; --warn-fg: #f5c46b; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111613; --surface: #18201b; --fg: #e5ece7; --muted: #94a39a; --line: #2a352e;
+  --accent: #5fc28d; --accent-soft: #1d3327; --up: #5fc28d; --down: #fb923c; --warn-bg: #3a2b10; --warn-fg: #f5c46b; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+body {
+  margin: 0; background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 15px; line-height: 1.55;
+}
+.wrap {
+  max-width: 1120px; margin: 0 auto;
+  padding-block: 28px 56px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; gap: 22px;
+}
+header { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; }
+h1 { margin: 0; font-size: 1.6rem; font-weight: 700; letter-spacing: -0.01em; text-wrap: balance; }
+.sub { color: var(--muted); font-size: 0.85rem; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.pill { font-size: 0.75rem; font-weight: 600; padding: 2px 9px; border-radius: 999px; letter-spacing: 0.02em; }
+.pill.demo { background: var(--warn-bg); color: var(--warn-fg); }
+
+.controls { display: flex; flex-wrap: wrap; gap: 14px 22px; align-items: center; }
+.ctl { display: flex; align-items: center; gap: 8px; }
+.ctl-label { font-size: 0.75rem; color: var(--muted); letter-spacing: 0.04em; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--surface); }
+.seg button {
+  font: inherit; font-size: 0.85rem; border: 0; background: transparent; color: var(--fg);
+  padding: 6px 12px; cursor: pointer;
+}
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--surface); font-weight: 600; }
+.seg button:focus-visible, .chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+.kpi {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px;
+  display: grid; gap: 6px; cursor: pointer; text-align: left; font: inherit; color: inherit;
+}
+.kpi[aria-pressed="false"] { opacity: 0.45; }
+.kpi-head { display: flex; align-items: center; gap: 8px; font-weight: 600; }
+.dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+.tag { font-size: 0.7rem; color: var(--accent); background: var(--accent-soft); padding: 1px 7px; border-radius: 999px; font-weight: 600; }
+.kpi-val { font-family: var(--font-data); font-size: 1.55rem; font-weight: 500; font-variant-numeric: tabular-nums; }
+.kpi-meta { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 0.8rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.up { color: var(--up); font-weight: 600; }
+.down { color: var(--down); font-weight: 600; }
+.empty-note { font-size: 0.82rem; color: var(--muted); }
+
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; min-width: 0; }
+.panel h2 { margin: 0 0 10px; font-size: 1rem; font-weight: 600; }
+.chart-box { position: relative; height: 340px; }
+.caption { font-size: 0.8rem; color: var(--muted); margin: 8px 0 0; }
+.table-scroll { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 0.85rem; font-variant-numeric: tabular-nums; }
+th, td { padding: 7px 10px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
+th:first-child, td:first-child { text-align: left; }
+th { font-weight: 600; color: var(--muted); font-size: 0.78rem; }
+td.num { font-family: var(--font-data); }
+tr.partial td { color: var(--muted); font-style: italic; }
+.how { font-size: 0.85rem; color: var(--muted); max-width: 70ch; }
+.how b { color: var(--fg); }
+.error { padding: 16px; border: 1px solid var(--down); border-radius: 10px; color: var(--down); }
+@media (max-width: 520px) { .chart-box { height: 260px; } h1 { font-size: 1.35rem; } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>브랜드 검색량 비교</h1>
+      <div class="sub" id="sub">네이버 검색 기준</div>
+    </div>
+  </header>
+
+  <div class="controls">
+    <div class="ctl"><span class="ctl-label">단위</span>
+      <div class="seg" id="unit">
+        <button type="button" data-v="day">일</button>
+        <button type="button" data-v="week" aria-pressed="true">주</button>
+        <button type="button" data-v="month">월</button>
+      </div>
+    </div>
+    <div class="ctl"><span class="ctl-label">기간</span>
+      <div class="seg" id="range">
+        <button type="button" data-v="90">3개월</button>
+        <button type="button" data-v="180" aria-pressed="true">6개월</button>
+        <button type="button" data-v="365">1년</button>
+        <button type="button" data-v="all">전체</button>
+      </div>
+    </div>
+    <div class="ctl"><span class="ctl-label">지표</span>
+      <div class="seg" id="metric">
+        <button type="button" data-v="abs" aria-pressed="true">추정 검색 수</button>
+        <button type="button" data-v="ratio">데이터랩 지수</button>
+      </div>
+    </div>
+  </div>
+
+  <section class="kpis" id="kpis" aria-label="브랜드별 요약"></section>
+
+  <section class="panel">
+    <h2 id="chart-title">추이</h2>
+    <div class="chart-box"><canvas id="chart" aria-label="브랜드별 검색량 추이 그래프"></canvas></div>
+    <p class="caption" id="chart-caption"></p>
+  </section>
+
+  <section class="panel">
+    <h2>기간별 숫자</h2>
+    <div class="table-scroll"><table id="table"></table></div>
+  </section>
+
+  <p class="how">
+    <b>숫자를 어떻게 만드나요?</b> 네이버 데이터랩은 날짜별 상대 지수(가장 많이 검색된 날 = 100)만 알려줍니다.
+    네이버 검색광고 API가 알려주는 최근 30일 실제 검색 수로 이 지수를 환산해 <b>일별 추정 검색 수</b>를 만듭니다.
+    브랜드끼리 비교할 때는 추정 검색 수를 보세요. 데이터랩 지수는 브랜드마다 기준이 달라서 서로 비교할 수 없습니다.
+  </p>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+(function () {
+  const state = { unit: "week", range: "180", metric: "abs", hidden: new Set() };
+  try {
+    const saved = JSON.parse(localStorage.getItem("sv-state") || "{}");
+    ["unit", "range", "metric"].forEach(k => { if (saved[k]) state[k] = saved[k]; });
+  } catch (e) {}
+  let data = null, chart = null;
+
+  const fmt = new Intl.NumberFormat("ko-KR", { maximumFractionDigits: 0 });
+  const fmt1 = new Intl.NumberFormat("ko-KR", { maximumFractionDigits: 1 });
+  const css = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+
+  // 날짜 → 주(월요일 시작) / 월 키
+  function weekStart(iso) {
+    const d = new Date(iso + "T00:00:00Z");
+    const dow = (d.getUTCDay() + 6) % 7;
+    d.setUTCDate(d.getUTCDate() - dow);
+    return d.toISOString().slice(0, 10);
+  }
+  function periodKey(iso, unit) {
+    if (unit === "day") return iso;
+    if (unit === "week") return weekStart(iso);
+    return iso.slice(0, 7);
+  }
+  function periodLabel(key, unit) {
+    if (unit === "month") { const [y, m] = key.split("-"); return `${y}.${m}`; }
+    const [y, m, d] = key.split("-");
+    return unit === "week" ? `${y.slice(2)}.${m}.${d} 주` : `${y.slice(2)}.${m}.${d}`;
+  }
+  function periodDays(key, unit) {
+    if (unit === "day") return 1;
+    if (unit === "week") return 7;
+    const [y, m] = key.split("-").map(Number);
+    return new Date(Date.UTC(y, m, 0)).getUTCDate();
+  }
+
+  // 일별 행을 단위별로 묶는다. 검색 수는 합계, 지수는 평균.
+  function aggregate(rows, unit) {
+    const map = new Map();
+    for (const [d, ratio, abs] of rows) {
+      const k = periodKey(d, unit);
+      let p = map.get(k);
+      if (!p) { p = { key: k, n: 0, ratio: 0, abs: 0, hasAbs: false }; map.set(k, p); }
+      p.n += 1; p.ratio += ratio;
+      if (abs !== null && abs !== undefined) { p.abs += abs; p.hasAbs = true; }
+    }
+    return [...map.values()].map(p => ({
+      key: p.key,
+      complete: p.n >= periodDays(p.key, unit),
+      ratio: p.ratio / p.n,
+      abs: p.hasAbs ? p.abs : null,
+    }));
+  }
+
+  function cutoffDate() {
+    if (state.range === "all") return null;
+    const end = new Date(data.range[1] + "T00:00:00Z");
+    end.setUTCDate(end.getUTCDate() - Number(state.range) + 1);
+    const iso = end.toISOString().slice(0, 10);
+    // 첫 구간이 잘려서 '진행 중'처럼 보이지 않도록 구간 시작일로 맞춘다.
+    if (state.unit === "week") return weekStart(iso);
+    if (state.unit === "month") return iso.slice(0, 7) + "-01";
+    return iso;
+  }
+
+  function activeGroups() { return data.groups.filter(g => data.series[g.id]); }
+
+  function build() {
+    const metric = (state.metric === "abs" && !data.has_absolute) ? "ratio" : state.metric;
+    const cut = cutoffDate();
+    const groups = activeGroups();
+    const perGroup = {};
+    for (const g of groups) {
+      let rows = data.series[g.id];
+      if (cut) rows = rows.filter(r => r[0] >= cut);
+      perGroup[g.id] = aggregate(rows, state.unit);
+    }
+    const keys = [...new Set(groups.flatMap(g => perGroup[g.id].map(p => p.key)))].sort();
+    return { metric, groups, perGroup, keys };
+  }
+
+  function renderSub() {
+    const sub = document.getElementById("sub");
+    const parts = [`네이버 검색 기준`, `${data.range[0]} ~ ${data.range[1]}`, `갱신 ${data.updated_at.replace("T", " ").slice(0, 16)}`];
+    sub.innerHTML = parts.map(p => `<span>${p}</span>`).join("<span aria-hidden='true'>·</span>")
+      + (data.demo ? ` <span class="pill demo">예시 데이터</span>` : "");
+  }
+
+  function renderKpis(b) {
+    const el = document.getElementById("kpis");
+    const unitName = { day: "어제", week: "지난주", month: "지난달" }[state.unit];
+    const prevName = { day: "전일", week: "전주", month: "전월" }[state.unit];
+    // 모든 브랜드 공통으로 마지막 '완결된' 기간을 기준으로 삼는다.
+    const lastComplete = {};
+    for (const g of b.groups) {
+      const done = b.perGroup[g.id].filter(p => p.complete);
+      lastComplete[g.id] = { cur: done[done.length - 1], prev: done[done.length - 2] };
+    }
+    const total = b.groups.reduce((s, g) => s + (lastComplete[g.id].cur?.abs || 0), 0);
+    let html = "";
+    for (const g of data.groups) {
+      if (!data.series[g.id]) {
+        html += `<div class="kpi" style="cursor:default"><div class="kpi-head"><span class="dot" style="background:${g.color}"></span>${g.name}${g.is_mine ? '<span class="tag">내 브랜드</span>' : ""}</div>
+          <div class="empty-note">아직 키워드가 없어요. config/brands.json에 키워드를 넣으면 다음 수집부터 표시됩니다.</div></div>`;
+        continue;
+      }
+      const { cur, prev } = lastComplete[g.id];
+      const v = cur ? (b.metric === "abs" ? cur.abs : cur.ratio) : null;
+      const pv = prev ? (b.metric === "abs" ? prev.abs : prev.ratio) : null;
+      const chg = (v !== null && pv) ? (v - pv) / pv * 100 : null;
+      const share = (b.metric === "abs" && total > 0 && cur) ? cur.abs / total * 100 : null;
+      const on = !state.hidden.has(g.id);
+      html += `<button type="button" class="kpi" data-id="${g.id}" aria-pressed="${on}" title="눌러서 그래프에서 켜기/끄기">
+        <div class="kpi-head"><span class="dot" style="background:${g.color}"></span>${g.name}${g.is_mine ? '<span class="tag">내 브랜드</span>' : ""}</div>
+        <div class="kpi-val">${v === null ? "–" : (b.metric === "abs" ? fmt.format(v) : fmt1.format(v))}<span style="font-size:.8rem;color:var(--muted);font-family:var(--font-body)"> ${b.metric === "abs" ? "회" : "지수"} · ${unitName}</span></div>
+        <div class="kpi-meta">
+          <span>${prevName} 대비 ${chg === null ? "–" : `<span class="${chg >= 0 ? "up" : "down"}">${chg >= 0 ? "▲" : "▼"} ${fmt1.format(Math.abs(chg))}%</span>`}</span>
+          ${share !== null ? `<span>점유율 ${fmt1.format(share)}%</span>` : ""}
+          ${g.monthly_searches != null ? `<span>최근 30일 ${fmt.format(g.monthly_searches)}회</span>` : ""}
+        </div>
+      </button>`;
+    }
+    el.innerHTML = html;
+    el.querySelectorAll("button.kpi").forEach(btn => btn.addEventListener("click", () => {
+      const id = btn.dataset.id;
+      state.hidden.has(id) ? state.hidden.delete(id) : state.hidden.add(id);
+      render();
+    }));
+  }
+
+  function renderChart(b) {
+    const unitWord = { day: "일별", week: "주별", month: "월별" }[state.unit];
+    document.getElementById("chart-title").textContent =
+      `${unitWord} ${b.metric === "abs" ? "추정 검색 수" : "데이터랩 지수"}`;
+    document.getElementById("chart-caption").textContent = b.metric === "abs"
+      ? "아직 끝나지 않은 이번 기간은 그래프에서 빼고, 아래 표에만 \"진행 중\"으로 보여줍니다."
+      : "데이터랩 지수는 브랜드마다 자기 최고치가 100이라 브랜드끼리 크기를 비교할 수 없습니다. 흐름만 보세요.";
+    b = { ...b, keys: b.keys.filter(k => b.groups.every(g => (b.perGroup[g.id].find(p => p.key === k) || { complete: true }).complete)) };
+    const labels = b.keys.map(k => periodLabel(k, state.unit));
+    const datasets = b.groups.filter(g => !state.hidden.has(g.id)).map(g => {
+      const byKey = new Map(b.perGroup[g.id].map(p => [p.key, p]));
+      // 아직 끝나지 않은 마지막 구간은 합계가 작게 나와 급락처럼 보이므로 그래프에서 뺀다.
+      const pts = b.keys.map(k => { const p = byKey.get(k); return p && p.complete ? p : undefined; });
+      return {
+        label: g.name,
+        data: pts.map(p => p ? (b.metric === "abs" ? p.abs : p.ratio) : null),
+        borderColor: g.color, backgroundColor: g.color + "22",
+        borderWidth: g.is_mine ? 2.6 : 1.8,
+        pointRadius: state.unit === "day" ? 0 : 2, pointHoverRadius: 4, tension: 0.25,
+        fill: false,
+      };
+    });
+    const grid = css("--line"), muted = css("--muted");
+    const cfg = {
+      type: "line",
+      data: { labels, datasets },
+      options: {
+        responsive: true, maintainAspectRatio: false, animation: false,
+        interaction: { mode: "index", intersect: false },
+        plugins: {
+          legend: { labels: { color: css("--fg"), boxWidth: 12, font: { family: css("--font-body") } } },
+          tooltip: { callbacks: { label: c => `${c.dataset.label}: ${c.parsed.y === null ? "–" : (b.metric === "abs" ? fmt.format(c.parsed.y) + "회" : fmt1.format(c.parsed.y))}` } },
+        },
+        scales: {
+          x: { ticks: { color: muted, maxRotation: 0, autoSkipPadding: 18 }, grid: { display: false }, border: { color: grid } },
+          y: { beginAtZero: true, ticks: { color: muted, callback: v => fmt.format(v) }, grid: { color: grid }, border: { display: false } },
+        },
+      },
+    };
+    if (chart) chart.destroy();
+    chart = new Chart(document.getElementById("chart"), cfg);
+  }
+
+  function renderTable(b) {
+    const keys = b.keys.slice(-12).reverse();
+    const head = `<tr><th>기간</th>${b.groups.map(g => `<th><span class="dot" style="display:inline-block;background:${g.color};margin-right:6px"></span>${g.name}</th>`).join("")}${b.metric === "abs" && b.groups.length > 1 ? b.groups.map(g => `<th>${g.name} 점유율</th>`).join("") : ""}</tr>`;
+    const rows = keys.map(k => {
+      const pts = b.groups.map(g => b.perGroup[g.id].find(p => p.key === k));
+      const vals = pts.map(p => p ? (b.metric === "abs" ? p.abs : p.ratio) : null);
+      const total = vals.reduce((s, v) => s + (v || 0), 0);
+      const partial = pts.some(p => p && !p.complete);
+      return `<tr class="${partial ? "partial" : ""}"><td>${periodLabel(k, state.unit)}${partial ? " (진행 중)" : ""}</td>`
+        + vals.map(v => `<td class="num">${v === null ? "–" : (b.metric === "abs" ? fmt.format(v) : fmt1.format(v))}</td>`).join("")
+        + (b.metric === "abs" && b.groups.length > 1 ? vals.map(v => `<td class="num">${total ? fmt1.format((v || 0) / total * 100) + "%" : "–"}</td>`).join("") : "")
+        + `</tr>`;
+    }).join("");
+    document.getElementById("table").innerHTML = `<thead>${head}</thead><tbody>${rows}</tbody>`;
+  }
+
+  function syncButtons() {
+    for (const id of ["unit", "range", "metric"]) {
+      document.querySelectorAll(`#${id} button`).forEach(btn => btn.setAttribute("aria-pressed", String(btn.dataset.v === state[id])));
+    }
+    const absBtn = document.querySelector('#metric button[data-v="abs"]');
+    absBtn.disabled = !data.has_absolute;
+    absBtn.title = data.has_absolute ? "" : "검색광고 API 키를 넣으면 쓸 수 있어요";
+  }
+
+  function render() {
+    syncButtons();
+    const b = build();
+    renderKpis(b); renderChart(b); renderTable(b);
+    try { localStorage.setItem("sv-state", JSON.stringify({ unit: state.unit, range: state.range, metric: state.metric })); } catch (e) {}
+  }
+
+  for (const id of ["unit", "range", "metric"]) {
+    document.getElementById(id).addEventListener("click", e => {
+      const btn = e.target.closest("button"); if (!btn || btn.disabled) return;
+      state[id] = btn.dataset.v; render();
+    });
+  }
+  const mq = window.matchMedia("(prefers-color-scheme: dark)");
+  mq.addEventListener && mq.addEventListener("change", () => data && render());
+  new MutationObserver(() => data && render()).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+
+  fetch("data/daily.json", { cache: "no-store" })
+    .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(d => {
+      data = d;
+      if (!data.has_absolute) state.metric = "ratio";
+      renderSub();
+      if (typeof Chart === "undefined") throw new Error("그래프 라이브러리를 불러오지 못했습니다. 인터넷 연결을 확인하고 새로고침하세요.");
+      render();
+    }, err => {
+      throw new Error(`데이터 파일(data/daily.json)을 읽지 못했습니다. 수집기를 한 번 실행했는지 확인하세요. (${err.message})`);
+    })
+    .catch(err => {
+      document.getElementById("kpis").innerHTML = `<div class="error">${err.message}</div>`;
+    });
+})();
+</script>
+</body>
+</html>
