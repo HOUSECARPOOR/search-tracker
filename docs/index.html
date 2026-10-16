@@ -376,7 +376,7 @@ td.partial { color: var(--ink-3); }
     return `<svg class="spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-hidden="true">
       <path d="${area}" fill="${color}" opacity=".12"/>
       <path d="${line}" fill="none" stroke="${color}" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linejoin="round" stroke-linecap="round"/>
-      <circle cx="${lp[0]}" cy="${lp[1]}" r="3" fill="${color}"/></svg>`;
+      <path d="M${lp[0].toFixed(1)} ${lp[1].toFixed(1)}h0" stroke="${color}" stroke-width="7" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg>`;
   }
 
   function renderMeta() {
