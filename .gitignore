@@ -1,2 +1,5 @@
 __pycache__/
 .env
+
+# Claude Code local permission cache (may hold approved commands with secrets)
+.claude/settings.local.json
